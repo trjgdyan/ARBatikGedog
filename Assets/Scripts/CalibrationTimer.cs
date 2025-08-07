@@ -54,7 +54,9 @@ public class CalibrationTimer : MonoBehaviour
         int t = timer;
         while (t > 0)
         {
-            text.text = "Copy the avatars starting pose: "+t.ToString();
+            // text.text = "Copy the avatars starting pose: "+t.ToString();
+            // salin pose awal model
+            text.text = "Salin pose awal model: " + t.ToString();
             yield return new WaitForSeconds(1f);
             --t;
         }

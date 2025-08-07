@@ -6,8 +6,6 @@ public class PythonRunner : MonoBehaviour
 {
     public void RunPythonScript()
     {
-        // string batPath = Path.Combine(Application.dataPath, ".", "StreamingAssets", "Running_mediapipe.bat");
-        // file .bat ada di folder Assets/StreamingAssets
         string batPath = Path.Combine(Application.streamingAssetsPath, "Running_mediapipe.bat");
 
         ProcessStartInfo psi = new ProcessStartInfo();

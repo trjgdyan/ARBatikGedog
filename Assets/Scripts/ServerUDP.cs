@@ -49,45 +49,46 @@ class ServerUDP
         t.Start();
     }
     public void StartListening()
-    {
-        print("Waiting for messages @Port:"+port);
-        messageBuffer.Clear();
-        open = true;
+{
+    print("Waiting for messages @Port:" + port);
+    messageBuffer.Clear();
+    open = true;
 
-        while (open)
+    while (open)
+    {
+        try
         {
-            try
+            buffer = server.Receive(ref endPoint);
+            if (buffer.Length > 0)
             {
-                if (!open || server.Client == null || !server.Client.Connected)
-                break;
-                buffer = server.Receive(ref endPoint);
-                if (buffer.Length > 0)
+                latestResponse = Encoding.UTF8.GetString(buffer, 0, buffer.Length);
+                string[] sa = latestResponse.Split(eom, StringSplitOptions.None);
+                for (int i = 0; i < sa.Length - 1; ++i)
                 {
-                    latestResponse = Encoding.UTF8.GetString(buffer, 0, buffer.Length);
-                    string[] sa = latestResponse.Split(eom, StringSplitOptions.None);
-                    for (int i = 0; i < sa.Length - 1; ++i)
+                    if (messageBuffer.Count >= maxMessageBufferSize)
                     {
-                        if (messageBuffer.Count >= maxMessageBufferSize)
-                        {
-                            messageBuffer.Dequeue();
-                            if(!suppressWarnings)
-                                print("Too slow to keep up with packets being sent (dropping old data). Make sure you are getting messages with GetMessage().");
-                        }
-                        messageBuffer.Enqueue(sa[i]);
-                        print("(" + messageBuffer.Count + ") " + sa[i]);
+                        messageBuffer.Dequeue();
+                        if (!suppressWarnings)
+                            print("Too slow to keep up with packets being sent (dropping old data).");
                     }
+                    messageBuffer.Enqueue(sa[i]);
+                    print("(" + messageBuffer.Count + ") " + sa[i]);
                 }
             }
-            catch (SocketException ex)
-            {
-                print("Connection lost.");
-                System.Threading.Thread.Sleep(1000);
-
-                    StartListening();
-                break;
-            }
+        }
+        catch (ObjectDisposedException)
+        {
+            print("UDP client disposed. Listener thread exiting.");
+            break;
+        }
+        catch (SocketException ex)
+        {
+            print("Socket exception: " + ex.Message);
+            Thread.Sleep(1000);
+            break; // Hindari rekursi berbahaya StartListening();
         }
     }
+}
 
     public bool HasMessage()
     {

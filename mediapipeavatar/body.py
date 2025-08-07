@@ -95,35 +95,7 @@ class BodyThread(threading.Thread):
                 # Set up data for relay
                 self.data = ""
                 i = 0
-                if results.pose_world_landmarks:
-                    landmarks = results.pose_world_landmarks.landmark
-                    #menghitung jarak antara shoulder kiri dan kanan
-                    left = landmarks[11]
-                    right = landmarks[12]
-                    shoulder_distance = ((left.x - right.x) ** 2 + (left.y - right.y) ** 2 + (left.z - right.z) ** 2) ** 0.5
-                    scale_multiplier = 25
-                    self.data += "<SCALE>|{}\n".format(shoulder_distance * scale_multiplier)
-                    print("shoulder Distance: ", shoulder_distance)
-                    
-                    
-                    #shoulder center
-                    sc_x = (landmarks[11].x + landmarks[12].x) / 2
-                    sc_y = (landmarks[11].y + landmarks[12].y) / 2
-                    sc_z = (landmarks[11].z + landmarks[12].z) / 2
-                    
-                    #hip center
-                    hc_x = (landmarks[23].x + landmarks[24].x) / 2
-                    hc_y = (landmarks[23].y + landmarks[24].y) / 2
-                    hc_z = (landmarks[23].z + landmarks[24].z) / 2
-                    
-                    #final center position
-                    scale_factor = 100
-                    center_x = (sc_x + hc_x) / 2 * scale_factor
-                    center_y = (sc_y + hc_y) / 2 * scale_factor
-                    center_z = (sc_z + hc_z) / 2 * scale_factor
-                    self.data += "<POS>|{}|{}|{}\n".format(center_x, center_y, center_z)
-                    print("Center Position: ", center_x, center_y, center_z)
-                                
+                if results.pose_world_landmarks:                              
                     hand_world_landmarks = results.pose_world_landmarks
                     for i in range(0,33):
                         self.data += "{}|{}|{}|{}\n".format(i,hand_world_landmarks.landmark[i].x,hand_world_landmarks.landmark[i].y,hand_world_landmarks.landmark[i].z)

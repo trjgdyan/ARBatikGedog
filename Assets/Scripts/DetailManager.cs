@@ -26,8 +26,8 @@ public class DetailManager : MonoBehaviour
     [Header("Size Button Elements")]
     public GameObject sizeButtonPrefab;
     public Transform sizeButtonContainer;
-    public Color selectedColor = new Color32(0x80, 0x19, 0x20, 0xFF);
-    public Color deselectedColor = Color.white;
+    public Color selectedColor = Color.white;
+    public Color deselectedColor = Color.gray;
 
     [Header("Action Buttons")]
     public Button tryOnButton;

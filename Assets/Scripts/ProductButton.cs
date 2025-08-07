@@ -11,7 +11,7 @@ public class ProductButton : MonoBehaviour
         // Simpan ID produk yang dipilih ke PlayerPrefs
         PlayerPrefs.SetInt("selectedProductId", productId);
 
-        // Pindah ke scene detail
+        // Pindah ke scene detailgl
         SceneManager.LoadScene("DetailProductScene");
     }
 }

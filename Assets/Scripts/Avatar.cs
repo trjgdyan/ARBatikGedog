@@ -83,23 +83,29 @@ public class Avatar : MonoBehaviour
     }
     public void Calibrate()
     {
-        // Here we store the values of variables required to do the correct rotations at runtime.
+        // disini kita menyimpan nilai variabel yang diperlukan untuk melakukan rotasi yang benar saat runtime.
         print("Calibrating on " + gameObject.name);
 
         parentCalibrationData.Clear();
 
-        // Manually setting calibration data for the spine chain as we want really specific control over that.
+        // Menetapkan data kalibrasi secara manual untuk rantai tulang belakang karena kita ingin kontrol yang sangat spesifik.
+        // mengambil referensi tulang belakang, leher, pinggul, dan kepala dari animator di pipserver.
+        // menyimpan data kalibrasi untuk rantai tulang belakang (spine) pada avatar.
         spineUpDown = new CalibrationData(animator.transform, animator.GetBoneTransform(HumanBodyBones.Spine), animator.GetBoneTransform(HumanBodyBones.Neck),
             server.GetVirtualHip(), server.GetVirtualNeck());
+        // menyimpan data kalibrasi untuk pinggul, dada, dan kepala pada avatar.
+        // hipsTwist adalah variabel yang menyimpan data kalibrasi untuk pinggul, menghubungkan transformasi dari pinggul ke pinggul kanan dan kiri untuk rotasi pada pinggul.
         hipsTwist = new CalibrationData(animator.transform, animator.GetBoneTransform(HumanBodyBones.Hips), animator.GetBoneTransform(HumanBodyBones.Hips),
             server.GetLandmark(Landmark.RIGHT_HIP), server.GetLandmark(Landmark.LEFT_HIP));
+        // mengatur rotasi dada berdasarkan pinggul dan pinggul kanan dan kiri
         chest = new CalibrationData(animator.transform, animator.GetBoneTransform(HumanBodyBones.Chest), animator.GetBoneTransform(HumanBodyBones.Chest),
             server.GetLandmark(Landmark.RIGHT_HIP), server.GetLandmark(Landmark.LEFT_HIP));
+            //Mengatur rotasi dan posisi kepala avatar. Cara kerja: head menghubungkan transformasi dari tulang leher ke kepala, menggunakan landmark leher virtual dan hidung
         head = new CalibrationData(animator.transform, animator.GetBoneTransform(HumanBodyBones.Neck), animator.GetBoneTransform(HumanBodyBones.Head),
             server.GetVirtualNeck(), server.GetLandmark(Landmark.NOSE));
 
 
-        // Adding calibration data automatically for the rest of the bones.
+        // menambahkan data kalibrasi secara otomatis untuk sisa tulang.
         AddCalibration(HumanBodyBones.RightUpperArm, HumanBodyBones.RightLowerArm,
             server.GetLandmark(Landmark.RIGHT_SHOULDER), server.GetLandmark(Landmark.RIGHT_ELBOW));
         AddCalibration(HumanBodyBones.RightLowerArm, HumanBodyBones.RightHand,
@@ -129,7 +135,7 @@ public class Avatar : MonoBehaviour
         }
 
 
-        animator.enabled = false; // disable animator to stop interference.
+        animator.enabled = false; // menonaktifkan animator untuk menghentikan gangguan.
         Calibrated = true;
 
         Debug.Log("Calibrating position and scale references...");
@@ -230,6 +236,7 @@ public class Avatar : MonoBehaviour
     }
     private void AddCalibration(HumanBodyBones parent, HumanBodyBones child, Transform trackParent, Transform trackChild)
     {
+        //menambahkan data kalibrsi untuk rantai tulang
         parentCalibrationData.Add(parent,
             new CalibrationData(animator.transform, animator.GetBoneTransform(parent), animator.GetBoneTransform(child),
             trackParent, trackChild));
@@ -243,17 +250,23 @@ public class Avatar : MonoBehaviour
 
     private void Update()
     {
-        // tidak melakukan apapun jika tidak dikalibrasi
+        // keluar jika belum terkalibrasi
         if (!Calibrated || parentCalibrationData.Count == 0 || server == null)
         {
             return;
         }
 
-
+        // hitung rotasi untuk setiap tulang yang telah dikalibrasi
         foreach (var i in parentCalibrationData)
         {
-            Quaternion deltaRotTracked = Quaternion.FromToRotation(i.Value.initialDir, i.Value.CurrentDirection);
+            // untuk setiap data kalibrasi yang disimpan di parentCalibrationData
+            Quaternion deltaRotTracked = Quaternion.FromToRotation(i.Value.initialDir, i.Value.CurrentDirection); // mengubah landmar saat dikalibrasi menjadi landmark saat ini
+            // rotasi tulang diatur dengan mengalikan deltaRotTracked dengan rotasi awal yang disimpan di i.Value.initialRotation
+            //perkalian digunakan untuk menggabungkan dua rotasi yaitu rotasi awal dan rotasi yang telah dihitung berdasarkan landmark saat ini
             i.Value.parent.rotation = deltaRotTracked * i.Value.initialRotation;
+            // Untuk menerapkan dua rotasi secara berurutan, kita mengalikan quaternion:Q_total = Q_new * Q_initialPembagian quaternion (Q1 / Q2) tidak digunakan untuk menggabungkan rotasi, melainkan untuk operasi lain seperti membalik rotasi.
+            //deltarot tracked adalah rotasi perubahan dari arah awal ke arah saat ini.
+            // ivalue.initialrotation adalah rotasi awal tulang saat kalibrasi.
         }
 
         // Hitung rotasi khusus untuk tulang belakang, dada, dan kepala

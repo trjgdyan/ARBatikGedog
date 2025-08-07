@@ -11893,7 +11893,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   server: {fileID: 499442782}
-  timer: 3
+  timer: 10
   calibrationKey: 99
   text: {fileID: 664772508}
 --- !u!4 &1232159307
@@ -19255,6 +19255,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 4257000056104632339, guid: 74253dbc81480fc449102f3416a53bf4, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4257000056973362725, guid: 74253dbc81480fc449102f3416a53bf4, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4257000057344140024, guid: 74253dbc81480fc449102f3416a53bf4, type: 3}
       propertyPath: previewCamera
       value: 
