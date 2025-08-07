@@ -15,11 +15,11 @@
 ### B. Menjalankan Backend Laravel
 
 1. Buka folder `ar-api` didalam project yang sudah di clone. `ar-api` merupakan folder untuk backend laravel yang mengelola informasi produk
-2. Jalankan project laravel melalui langkah-langkah berikut: \
-     - Composser update \
-     - copy `.env.example` menjadi `.env` \
-     - Generate key dengan perintah `php artisan key:generate` \
-     - Lalu migrate ulang dengan `php artisan migrate` \
+2. Jalankan project laravel melalui langkah-langkah berikut: 
+     - Composser update 
+     - copy `.env.example` menjadi `.env`
+     - Generate key dengan perintah `php artisan key:generate` 
+     - Lalu migrate ulang dengan `php artisan migrate` 
      - Terakhir jalankan project dengan perintah `php artisan serve`. Pastikan sudah mengaktifkan database MySQL.
 
 ## Cara Menggunakan Aplikasi Katalog Produk UMKM Batik Gedog Tuban dengan fitur Virtual Try-on
